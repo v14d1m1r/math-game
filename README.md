@@ -66,6 +66,57 @@ Za ovu skriptu potrebni su i `clang` i `zip`. Skripta pravi isti Windows paket u
 
 Izvršni fajl nastaje u `target/x86_64-pc-windows-msvc/release/math-game.exe`. Uz njega priloži `WINDOWS-README.txt` i `assets/fonts/LICENSE-Liberation.txt`. Windows CRT je statički uključen preko `.cargo/config.toml`.
 
+## Rebuild posle izmena
+
+Sve komande pokreći iz glavnog foldera projekta, gde je `Cargo.toml`.
+
+### 1. Provera izmena
+
+```sh
+cargo fmt
+cargo test --locked
+```
+
+Ako testovi prolaze, napravi željeni paket. `cargo fmt` automatski formatira kod.
+
+### 2. Linux paket
+
+```sh
+bash scripts/build-linux.sh
+```
+
+### 3. Windows paket sa Linux računara
+
+Ako je `cargo-xwin` trajno instaliran:
+
+```sh
+bash scripts/build-windows.sh
+```
+
+Na trenutnom razvojnom računaru alat je prvobitno instaliran u `/tmp/math-game-tools/bin`. Dok taj direktorijum postoji, možeš koristiti:
+
+```sh
+PATH=/tmp/math-game-tools/bin:$PATH bash scripts/build-windows.sh
+```
+
+Sadržaj `/tmp` može nestati nakon restarta. Za trajnu instalaciju jednom pokreni:
+
+```sh
+rustup target add x86_64-pc-windows-msvc
+cargo install --locked cargo-xwin
+```
+
+Direktorijum sa instaliranim Cargo alatima (podrazumevano `~/.cargo/bin`) mora biti u `PATH`. Potrebni su i `clang` i `zip`, kao što je opisano u odeljku za Windows. Posle instalacije koristi običnu komandu `bash scripts/build-windows.sh`.
+
+### 4. Gotovi paketi
+
+Skripte ažuriraju odgovarajuće pakete:
+
+- Linux: `dist/mala-matematika-linux-x64.tar.gz`
+- Windows: `dist/mala-matematika-windows-x64.zip`
+
+Za probu na Windowsu kopiraj novi ZIP na USB, prebaci ga na Windows računar, raspakuj i pokreni `mala-matematika.exe`. Zameni prethodno raspakovanu verziju novom; sam rebuild ne ažurira kopije na USB-u ili drugom računaru.
+
 ## Razvoj
 
 `src/lib.rs` sadrži pravila, generisanje zadataka i testove. `src/main.rs` sadrži Bevy interfejs i unos.
